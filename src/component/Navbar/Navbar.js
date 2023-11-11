@@ -8,55 +8,53 @@ import ListItemText from "@mui/material/ListItemText";
 import Toolbar from "@mui/material/Toolbar";
 import { mainNavbarItems } from "../Navbar/consts/navbarItems";
 import { Hidden } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
-const drawerWidth = 200;
-const drawer = (
-  <div>
-    <Toolbar>
-      <img
-        src={require("../assests/long.png")}
-        alt="Logo"
-        loading="lazy"
-        style={{
-          height: "140px",
-          width: "130px",
-          overflow: Hidden,
-          paddingTop: "25px",
-        }}
-      />
-    </Toolbar>
-    <List>
-      {mainNavbarItems.map((text, index) => (
-        <ListItem key={text.id} disablePadding>
-          <ListItemButton>
-            <ListItemIcon sx={{ color: "#9DA4AE" }}>{text.icon}</ListItemIcon>
-            <ListItemText primary={text.label} />
-          </ListItemButton>
-        </ListItem>
-      ))}
-    </List>
-  </div>
-);
+const drawerWidth = 220;
+
 const Navbar = () => {
+  const navigate = useNavigate();
   return (
     <Drawer
       variant="permanent"
       anchor="left"
       ModalProps={{
-        keepMounted: true, // Better open performance on mobile.
+        keepMounted: true,
       }}
       sx={{
         width: drawerWidth,
         flexShrink: 0,
         "& .MuiDrawer-paper": {
+          width: 220,
           boxSizing: "border-box",
-          width: drawerWidth,
-          backgroundColor: "#111927",
-          color: "#9DA4AE",
+          backgroundColor: "#101F33",
+          color: "rgba(255, 255, 255, 0.7)",
         },
       }}
     >
-      {drawer}
+      <Toolbar>
+        <img
+          src={require("../assests/long.png")}
+          alt="Logo"
+          loading="lazy"
+          style={{
+            height: "120px",
+            width: "120px",
+            overflow: Hidden,
+            paddingTop: "25px",
+          }}
+        />
+      </Toolbar>
+      <List>
+        {mainNavbarItems.map((text, index) => (
+          <ListItem key={text.id} disablePadding>
+            <ListItemButton onClick={() => navigate(text.route)}>
+              <ListItemIcon sx={{ color: "#9DA4AE" }}>{text.icon}</ListItemIcon>
+              <ListItemText primary={text.label} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
     </Drawer>
   );
 };
