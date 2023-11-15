@@ -51,8 +51,8 @@ const Outcomes = ({ projectData, updateProjectData }) => {
         flexDirection: "column",
         height: "100vh",
         width: "100%",
-        background: "#FCF5ED",
-        padding: "0px",
+        // background: "#FCF5ED",
+        paddingLeft: "220px",
         margin: "0px",
         boxSizing: "border-box",
       }}

@@ -33,7 +33,7 @@ const Navbar = () => {
       }}
     >
       <Toolbar>
-        <img
+        {/* <img
           src={require("../assests/long.png")}
           alt="Logo"
           loading="lazy"
@@ -43,7 +43,7 @@ const Navbar = () => {
             overflow: Hidden,
             paddingTop: "25px",
           }}
-        />
+        /> */}
       </Toolbar>
       <List>
         {mainNavbarItems.map((text, index) => (
