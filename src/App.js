@@ -5,14 +5,11 @@ import Outcomes from "./pages/Outcomes/Outcomes";
 import Navbar from "./component/Navbar/Navbar";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Grid } from "@mui/material";
-import {
-  makeStyles,
-  CssBaseline,
-  createMuiTheme,
-  ThemeProvider,
-} from "@material-ui/core";
+import { makeStyles, ThemeProvider } from "@material-ui/core";
 
-const theme = createMuiTheme({
+import { createTheme } from "@material-ui/core/styles";
+
+const theme = createTheme({
   palette: {
     primary: {
       main: "#333996",
@@ -46,6 +43,7 @@ const useStyles = makeStyles({
     width: "100%",
   },
 });
+
 function App() {
   const classes = useStyles();
   const [projectData, setProjectData] = useState({
@@ -67,7 +65,7 @@ function App() {
   };
 
   useEffect(() => {
-    localStorage.clear("outcomes");
+    // localStorage.clear();
     const storedData = JSON.parse(localStorage.getItem("projectData"));
     if (storedData) {
       setProjectData(storedData);
@@ -108,7 +106,6 @@ function App() {
                 </div>
               }
             />
-            {/* <CssBaseline /> */}
           </Routes>
         </Router>
       </Grid>

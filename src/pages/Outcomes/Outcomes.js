@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import IndicatorForm from "./IndicatorForm";
 import PageHeader from "../../component/PageHeader";
 import {
@@ -19,6 +19,13 @@ import Popup from "../../component/Popup";
 import EditOutlinedIcon from "@material-ui/icons/EditOutlined";
 import CloseIcon from "@mui/icons-material/Close";
 import OutputIcon from "@mui/icons-material/Output";
+
+import Grid from "@mui/material/Grid";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import Stack from "@mui/material/Stack";
+import SaveIcon from "@mui/icons-material/Save";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
 
 const useStyles = makeStyles((theme) => ({
   pageContent: {
@@ -58,6 +65,16 @@ export default function Outcomes() {
   const { TblContainer, TblHead, TblPagination, recordsAfterPagingAndSorting } =
     useTable(records, headCells, filterFn);
 
+  useEffect(() => {
+    console.log("Component Mounted"); // Placeholder log
+    const fetchData = async () => {
+      const updatedRecords = await indicatorService.getAllIndicators();
+      setRecords(updatedRecords || []); // Set records or an empty array if undefined
+      console.log("Fetched Data:", updatedRecords);
+    };
+
+    fetchData();
+  }, []);
   const handleSearch = (e) => {
     let target = e.target;
     setFilterFn({
@@ -65,19 +82,27 @@ export default function Outcomes() {
         if (target.value === "") return items;
         else
           return items.filter((x) =>
-            x.fullName.toLowerCase().includes(target.value)
+            x.indicator.toLowerCase().includes(target.value)
           );
       },
     });
   };
 
-  const addOrEdit = (indicator, resetForm) => {
-    if (indicator.id === 0) indicatorService.insertIndicator(indicator);
-    else indicatorService.updateIndicator(indicator);
+  const addOrEdit = (data, resetForm) => {
+    data.indicatorId = data.id;
+    if (data.indicatorId === undefined) {
+      indicatorService.insertIndicator(data);
+      data.indicatorId = indicatorService.generateIndicatorId();
+      console.log(data.id);
+    } else indicatorService.updateIndicator(data);
     resetForm();
     setRecordForEdit(null);
     setOpenPopup(false);
-    setRecords(indicatorService.getAllIndicators());
+    setRecords(
+      indicatorService
+        .getAllIndicators()
+        .map((x) => ({ ...x, id: x.indicatorId }))
+    );
   };
 
   const openInPopup = (item) => {
@@ -85,11 +110,48 @@ export default function Outcomes() {
     setOpenPopup(true);
   };
 
-  const handleDelete = (indicatorId) => {
-    if (window.confirm("Are you sure to delete this record?"))
-      indicatorService.deleteIndicator(indicatorId);
-    setRecords(indicatorService.getAllIndicators());
+  const handleDelete = async (indicatorId) => {
+    if (window.confirm("Are you sure to delete this record?")) {
+      console.log("Deleting indicator with ID:", indicatorId);
+      const updatedIndicators = indicatorService.deleteIndicator(indicatorId);
+      console.log("Updated Indicators after deletion:", updatedIndicators);
+      setRecords(updatedIndicators);
+    }
   };
+
+  /*Outcome*/
+
+  const [nextId, setNextId] = useState(1);
+  const [outcomes, setOutcomes] = useState([
+    { ID: nextId, VALUE: "", OUTPUT: [] },
+  ]);
+  // const handleSave = () => {
+  //   // Update projectData with the  entered outcome
+  //   updateProjectData({
+  //     outcomes: [...projectData.outcomes, ...outcomes],
+  //   });
+  //   // Move to the next page
+  // };
+
+  const handleAddOutcome = () => {
+    setOutcomes((prevOutcomes) => [
+      ...prevOutcomes,
+      { ID: nextId + 1, VALUE: "", OUTPUT: [] },
+    ]);
+    setNextId((prevId) => prevId + 1); // Increment nextId
+  };
+
+  const handleChange = (index, field, value) => {
+    setOutcomes((prevOutcomes) => {
+      const updatedOutcomes = [...prevOutcomes];
+      updatedOutcomes[index] = {
+        ...updatedOutcomes[index],
+        [field]: value,
+      };
+      return updatedOutcomes;
+    });
+  };
+
   return (
     <>
       <PageHeader
@@ -97,6 +159,71 @@ export default function Outcomes() {
         subTitle="Define the outcomes of your project with indicators"
         icon={<OutputIcon fontSize="large" />}
       />
+      <Paper className={classes.pageContent}>
+        {/* <Grid
+          item
+          sx={8}
+          md={12}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-around",
+            flexWrap: "norawp",
+            flexDirection: "column",
+            // height: "100vh",
+            // width: "100%",
+            // background: "#FCF5ED",
+            paddingLeft: "220px",
+            margin: "0px",
+            boxSizing: "border-box",
+          }}
+        > */}
+        {outcomes.map((outcome, index) => (
+          <div
+            key={index}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              flexWrap: "norawp",
+              flexDirection: "row",
+              // height: "100vh",
+              // width: "50%",
+            }}
+          >
+            <TextField
+              id="standard-basic"
+              label="Outcome Name"
+              variant="standard"
+              sx={{ width: "50%" }}
+              value={outcome.VALUE}
+              onChange={(e) => handleChange(index, "VALUE", e.target.value)}
+            />
+            <Stack direction="row" spacing={2}>
+              <Button
+                variant="outlined"
+                startIcon={<AddCircleIcon />}
+                sx={{ marginBottom: "50px" }}
+                onClick={handleAddOutcome}
+              >
+                Add
+              </Button>
+            </Stack>
+          </div>
+        ))}
+
+        <Stack direction="row" spacing={2}>
+          <Button
+            variant="outlined"
+            startIcon={<SaveIcon />}
+            sx={{ marginBottom: "50px" }}
+            // onClick={handleSave}
+          >
+            NEXT
+          </Button>
+        </Stack>
+        {/* </Grid> */}
+      </Paper>
       <Paper className={classes.pageContent}>
         <Toolbar>
           <Controls.Input
@@ -126,13 +253,13 @@ export default function Outcomes() {
           <TblHead />
           <TableBody>
             {recordsAfterPagingAndSorting().map((item) => (
-              <TableRow key={item.indicatorId}>
+              <TableRow key={item.id}>
                 <TableCell>{item.outcomeId}</TableCell>
                 <TableCell>{item.indicatorId}</TableCell>
                 <TableCell>{item.indicator}</TableCell>
+                <TableCell>{item.calculation}</TableCell>
                 <TableCell>{item.disaggregation}</TableCell>
                 <TableCell>{item.target}</TableCell>
-                <TableCell>{item.calculation}</TableCell>
                 <TableCell>
                   <Controls.ActionButton
                     color="primary"
@@ -145,7 +272,7 @@ export default function Outcomes() {
                   <Controls.ActionButton
                     color="secondary"
                     onClick={() => {
-                      handleDelete(item);
+                      handleDelete(item.indicatorId);
                     }}
                   >
                     <CloseIcon fontSize="small" />

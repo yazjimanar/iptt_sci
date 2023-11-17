@@ -5,12 +5,12 @@ import { useForm, Form } from "../../component/useForm";
 import * as indicatorService from "../../services/indicatorService";
 
 const initialFValues = {
+  outcomeId: "",
   indicatorId: "",
   indicator: "",
-  target: "",
-  disaggregation: "",
   calculation: "",
-  outcomeId: "",
+  disaggregation: "",
+  target: "",
 };
 
 export default function IndicatorForm(props) {
@@ -42,21 +42,21 @@ export default function IndicatorForm(props) {
     if (validate()) {
       addOrEdit(values, resetForm);
     }
-    console.log(values);
   };
 
   useEffect(() => {
-    if (recordForEdit != null)
+    if (recordForEdit != null) {
       setValues({
         ...recordForEdit,
+        calculation: recordForEdit.calculationId || "", // Set calculation properly
       });
-  }, [recordForEdit, setValues]); //
+    }
+  }, [recordForEdit, setValues]);
 
   return (
     <Form onSubmit={handleSubmit}>
       <Grid container>
         <Grid item xs={6}>
-          .
           <Controls.Input
             name="indicator"
             label="Indicator"
@@ -83,10 +83,9 @@ export default function IndicatorForm(props) {
           <Controls.Select
             name="calculation"
             label="Calculation Methode"
-            value={values.departmentId}
+            value={values.calculation}
             onChange={handleInputChange}
             options={indicatorService.getCalculationCollection()}
-            error={errors.departmentId}
           />
 
           <Controls.Button type="submit" text="Submit" />

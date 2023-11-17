@@ -11,21 +11,30 @@ export const getCalculationCollection = () => [
 
 export function insertIndicator(data) {
   let Indicators = getAllIndicators();
-  data["id"] = generateIndicatorId();
+  data["indicatorId"] = generateIndicatorId();
+  data["calculationId"] =
+    data.calculation !== undefined ? data.calculation : "";
   Indicators.push(data);
   localStorage.setItem(KEYS.Indicators, JSON.stringify(Indicators));
+  console.log("Stored Data:", Indicators);
 }
 
 export function updateIndicator(data) {
   let Indicators = getAllIndicators();
-  let recordIndex = Indicators.findIndex((x) => x.id === data.id);
+  let recordIndex = Indicators.findIndex(
+    (x) => x.indicatorId === data.indicatorId
+  ); // Corrected property name
   Indicators[recordIndex] = { ...data };
   localStorage.setItem(KEYS.Indicators, JSON.stringify(Indicators));
 }
+
 export function deleteIndicator(indicatorId) {
   let Indicators = getAllIndicators();
-  let updatedIndicators = Indicators.filter((x) => x.id !== indicatorId);
+  let updatedIndicators = Indicators.filter(
+    (x) => x.indicatorId !== indicatorId
+  );
   localStorage.setItem(KEYS.Indicators, JSON.stringify(updatedIndicators));
+  return updatedIndicators;
 }
 
 export function generateIndicatorId() {
@@ -40,10 +49,15 @@ export function getAllIndicators() {
   if (localStorage.getItem(KEYS.Indicators) == null)
     localStorage.setItem(KEYS.Indicators, JSON.stringify([]));
   let Indicators = JSON.parse(localStorage.getItem(KEYS.Indicators));
-  //map departmentID to department title
+
+  // Ensure that calculations array is defined
   let calculations = getCalculationCollection();
+
   return Indicators.map((x) => ({
     ...x,
-    calculation: calculations[x.calculationId - 1].title,
+    calculation:
+      x.calculationId !== undefined
+        ? calculations.find((c) => c.id === x.calculationId)?.title || ""
+        : "",
   }));
 }

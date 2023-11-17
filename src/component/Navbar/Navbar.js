@@ -10,7 +10,7 @@ import { mainNavbarItems } from "../Navbar/consts/navbarItems";
 import { Hidden } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
-const drawerWidth = 220;
+const drawerWidth = 320;
 
 const Navbar = () => {
   const navigate = useNavigate();
