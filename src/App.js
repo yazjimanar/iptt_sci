@@ -39,7 +39,7 @@ const theme = createTheme({
 
 const useStyles = makeStyles({
   appMain: {
-    paddingLeft: "320px",
+    paddingLeft: "235px",
     width: "100%",
   },
 });
@@ -59,6 +59,16 @@ function App() {
     },
     outcomes: [],
   });
+  const [outcomeIndicators, setOutcomeIndicators] = useState({
+    outcomeIndicators: {
+      outcomeId: "",
+      indicatorId: "",
+      indicator: "",
+      calculation: "",
+      disaggregation: "",
+      target: "",
+    },
+  });
 
   const updateProjectData = (newData) => {
     setProjectData((prevData) => ({ ...prevData, ...newData }));
@@ -67,11 +77,18 @@ function App() {
   useEffect(() => {
     // localStorage.clear();
     const storedData = JSON.parse(localStorage.getItem("projectData"));
+    const storedIndicator = JSON.parse(
+      localStorage.getItem("outcomeIndicators")
+    );
     if (storedData) {
       setProjectData(storedData);
     }
+    if (storedIndicator) {
+      setOutcomeIndicators(storedIndicator);
+    }
   }, []);
 
+  console.log(outcomeIndicators);
   console.log(projectData);
 
   useEffect(() => {

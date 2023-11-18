@@ -16,7 +16,7 @@ export function insertIndicator(data) {
     data.calculation !== undefined ? data.calculation : "";
   Indicators.push(data);
   localStorage.setItem(KEYS.Indicators, JSON.stringify(Indicators));
-  console.log("Stored Data:", Indicators);
+  // console.log(Indicators);
 }
 
 export function updateIndicator(data) {

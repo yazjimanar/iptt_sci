@@ -3,6 +3,7 @@ import { Grid } from "@material-ui/core";
 import Controls from "../../component/controls/Controls";
 import { useForm, Form } from "../../component/useForm";
 import * as indicatorService from "../../services/indicatorService";
+import Tooltip from "@mui/material/Tooltip";
 
 const initialFValues = {
   outcomeId: "",
@@ -71,13 +72,15 @@ export default function IndicatorForm(props) {
             onChange={handleInputChange}
             error={errors.target}
           />
-          <Controls.Input
-            name="disaggregation"
-            label="Disaggregation"
-            value={values.disaggregation}
-            onChange={handleInputChange}
-            error={errors.disaggregation}
-          />
+          <Tooltip title="Include numerous inputs, separating each entry with a comma, like 'Men, Women, Boys, Girls.'">
+            <Controls.Input
+              name="disaggregation"
+              label="Disaggregation"
+              value={values.disaggregation}
+              onChange={handleInputChange}
+              error={errors.disaggregation}
+            />
+          </Tooltip>
         </Grid>
         <Grid item xs={6} style={{ display: "flex", flexDirection: "column" }}>
           <Controls.Select

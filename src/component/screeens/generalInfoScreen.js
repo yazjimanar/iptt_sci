@@ -12,15 +12,15 @@ import Stack from "@mui/material/Stack";
 import SaveIcon from "@mui/icons-material/Save";
 import Grid from "@mui/material/Grid";
 import Navbar from "../Navbar/Navbar";
-import {
-  Paper,
-  makeStyles,
-  // TableBody,
-  // TableRow,
-  // TableCell,
-  // Toolbar,
-  // InputAdornment,
-} from "@material-ui/core";
+// import {
+//   // Paper,
+//   // makeStyles,
+//   // TableBody,
+//   // TableRow,
+//   // TableCell,
+//   // Toolbar,
+//   // InputAdornment,
+// } from "@material-ui/core";
 
 const GeneralInfoPage = ({
   projectData = { generalInfo: [] },
@@ -51,21 +51,21 @@ const GeneralInfoPage = ({
       [field]: value,
     }));
   };
-  const useStyles = makeStyles((theme) => ({
-    pageContent: {
-      margin: theme.spacing(5),
-      padding: theme.spacing(3),
-    },
-    searchInput: {
-      width: "75%",
-    },
-    newButton: {
-      position: "absolute",
-      right: "10px",
-    },
-  }));
+  // const useStyles = makeStyles((theme) => ({
+  //   pageContent: {
+  //     margin: theme.spacing(5),
+  //     padding: theme.spacing(3),
+  //   },
+  //   searchInput: {
+  //     width: "75%",
+  //   },
+  //   newButton: {
+  //     position: "absolute",
+  //     right: "10px",
+  //   },
+  // }));
 
-  const classes = useStyles();
+  // const classes = useStyles();
   return (
     // <Paper
     //   className={classes.pageContent}

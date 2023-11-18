@@ -1,0 +1,68 @@
+import React, { useEffect } from "react";
+import { Grid } from "@material-ui/core";
+import Controls from "../../component/controls/Controls";
+import { useForm, Form } from "../../component/useForm";
+
+const initialFValues = {
+  outcomeId: "",
+  outcome: "",
+};
+
+export default function OutcomeForm(props) {
+  const { addOrEditOutcome, recordForEditOutcome } = props;
+
+  const validate = (fieldValues = values) => {
+    let temp = { ...errors };
+    if ("outcome" in fieldValues)
+      temp.outcome = fieldValues.outcome ? "" : "This field is required.";
+    setErrors({
+      ...temp,
+    });
+
+    if (fieldValues === values)
+      return Object.values(temp).every((x) => x === "");
+  };
+
+  const { values, setValues, errors, setErrors, handleInputChange, resetForm } =
+    useForm(initialFValues, true, validate);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (validate()) {
+      addOrEditOutcome(values, resetForm);
+    }
+  };
+
+  useEffect(() => {
+    if (recordForEditOutcome != null) {
+      setValues({
+        ...recordForEditOutcome,
+      });
+    }
+  }, [recordForEditOutcome, setValues]);
+
+  return (
+    <Form onSubmit={handleSubmit}>
+      <Grid container>
+        <Grid item xs={6}>
+          <Controls.Input
+            name="outcomeId"
+            label="Outcome ID"
+            value={values.outcomeId}
+            onChange={handleInputChange}
+            error={errors.outcomeId}
+          />
+          <Controls.Input
+            name="outcome"
+            label="Outcome"
+            value={values.outcome}
+            onChange={handleInputChange}
+            error={errors.outcome}
+          />
+        </Grid>
+        <Controls.Button type="submit" text="Submit" />
+        <Controls.Button text="Reset" color="default" onClick={resetForm} />
+      </Grid>
+    </Form>
+  );
+}
