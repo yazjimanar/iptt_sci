@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import IndicatorForm from "./IndicatorForm";
-import OutcomeForm from "./outcomeForm";
+import OutcomeForm from "./OutcomeForm";
 import PageHeader from "../../component/PageHeader";
 import {
   Paper,
@@ -55,8 +55,16 @@ export default function Outcomes() {
   const classes = useStyles();
   const [recordForEdit, setRecordForEdit] = useState(null);
   const [recordForEditOutcome, setRecordForEditOutcome] = useState(null);
+  const [outcomeRecords, setOutcomeRecords] = useState(
+    indicatorService.getAllIndicators()
+  );
   const [records, setRecords] = useState(indicatorService.getAllIndicators());
   const [filterFn, setFilterFn] = useState({
+    fn: (items) => {
+      return items;
+    },
+  });
+  const [outcomeFilterFn, setOutcomeFilterFn] = useState({
     fn: (items) => {
       return items;
     },
@@ -64,8 +72,19 @@ export default function Outcomes() {
   const [openPopup, setOpenPopup] = useState(false);
   const [outcomeOpenPopup, setOutcomeOpenPopup] = useState(false);
 
-  const { TblContainer, TblHead, TblPagination, recordsAfterPagingAndSorting } =
-    useTable(records, headCells, filterFn);
+  const {
+    TblContainer,
+    TblHead,
+    TblPagination,
+    recordsAfterPagingAndSorting: indicatorRecordsAfterPagingAndSorting,
+  } = useTable(records, headCells, filterFn);
+
+  const {
+    TblContainer: OTblContainer,
+    TblHead: OTblHead,
+    TblPagination: OTblPagination,
+    recordsAfterPagingAndSorting: outcomeRecordsAfterPagingAndSorting,
+  } = useTable(outcomeRecords, outcomeHeadCells, outcomeFilterFn);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -167,6 +186,7 @@ export default function Outcomes() {
           />
           <Controls.Button
             text="Add New Outcome"
+            style={{ borderRadius: "20px" }}
             variant="outlined"
             startIcon={<AddIcon />}
             className={classes.newButton}
@@ -176,6 +196,39 @@ export default function Outcomes() {
             }}
           />
         </Toolbar>
+        <OTblContainer>
+          <OTblHead />
+          <TableBody>
+            {outcomeRecordsAfterPagingAndSorting().map((item) => (
+              <TableRow
+                key={item.id}
+                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+              >
+                <TableCell style={{ width: "20%" }}>{item.outcomeId}</TableCell>
+                <TableCell style={{ width: "67%" }}>{item.outcome}</TableCell>
+                <TableCell>
+                  <Controls.ActionButton
+                    color="primary"
+                    // onClick={() => {
+                    //   openInPopup(item);
+                    // }}
+                  >
+                    <EditOutlinedIcon fontSize="small" />
+                  </Controls.ActionButton>
+                  <Controls.ActionButton
+                    color="secondary"
+                    // onClick={() => {
+                    //   handleDelete(item.outcomeId);
+                    // }}
+                  >
+                    <CloseIcon fontSize="small" />
+                  </Controls.ActionButton>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </OTblContainer>
+        <OTblPagination />
       </Paper>
       <Popup
         title="Outcome Form"
@@ -204,6 +257,7 @@ export default function Outcomes() {
           />
           <Controls.Button
             text="Add New Indicator"
+            style={{ borderRadius: "20px" }}
             variant="outlined"
             startIcon={<AddIcon />}
             className={classes.newButton}
@@ -216,7 +270,7 @@ export default function Outcomes() {
         <TblContainer>
           <TblHead />
           <TableBody>
-            {recordsAfterPagingAndSorting().map((item) => (
+            {indicatorRecordsAfterPagingAndSorting().map((item) => (
               <TableRow key={item.id}>
                 <TableCell>{item.outcomeId}</TableCell>
                 <TableCell>{item.indicatorId}</TableCell>

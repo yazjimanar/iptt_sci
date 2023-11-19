@@ -91,8 +91,17 @@ export default function IndicatorForm(props) {
             options={indicatorService.getCalculationCollection()}
           />
 
-          <Controls.Button type="submit" text="Submit" />
-          <Controls.Button text="Reset" color="default" onClick={resetForm} />
+          <Controls.Button
+            type="submit"
+            text="Submit"
+            style={{ borderRadius: "20px" }}
+          />
+          <Controls.Button
+            text="Reset"
+            color="default"
+            onClick={resetForm}
+            style={{ borderRadius: "20px" }}
+          />
         </Grid>
       </Grid>
     </Form>

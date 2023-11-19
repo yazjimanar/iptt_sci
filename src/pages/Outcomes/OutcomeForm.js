@@ -4,7 +4,7 @@ import Controls from "../../component/controls/Controls";
 import { useForm, Form } from "../../component/useForm";
 
 const initialFValues = {
-  outcomeId: "",
+  outcomeId: 1,
   outcome: "",
 };
 
@@ -44,13 +44,14 @@ export default function OutcomeForm(props) {
   return (
     <Form onSubmit={handleSubmit}>
       <Grid container>
-        <Grid item xs={6}>
+        <Grid item xs={12}>
           <Controls.Input
             name="outcomeId"
-            label="Outcome ID"
+            label="ID"
             value={values.outcomeId}
             onChange={handleInputChange}
             error={errors.outcomeId}
+            style={{ width: "10%" }}
           />
           <Controls.Input
             name="outcome"
@@ -58,10 +59,31 @@ export default function OutcomeForm(props) {
             value={values.outcome}
             onChange={handleInputChange}
             error={errors.outcome}
+            style={{ width: "700px" }}
           />
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyItems: "center",
+              flexDirection: "column",
+            }}
+          >
+            <div>
+              <Controls.Button
+                type="submit"
+                text="Submit"
+                style={{ borderRadius: "20px" }}
+              />
+              <Controls.Button
+                text="Reset"
+                color="default"
+                onClick={resetForm}
+                style={{ borderRadius: "20px" }}
+              />
+            </div>
+          </div>
         </Grid>
-        <Controls.Button type="submit" text="Submit" />
-        <Controls.Button text="Reset" color="default" onClick={resetForm} />
       </Grid>
     </Form>
   );
