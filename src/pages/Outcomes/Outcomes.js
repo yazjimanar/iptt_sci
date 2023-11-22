@@ -56,9 +56,11 @@ export default function Outcomes() {
   const [recordForEdit, setRecordForEdit] = useState(null);
   const [recordForEditOutcome, setRecordForEditOutcome] = useState(null);
   const [outcomeRecords, setOutcomeRecords] = useState(
-    indicatorService.getAllIndicators()
+    indicatorService.getAllIndicators("OutcomesData")
   );
-  const [records, setRecords] = useState(indicatorService.getAllIndicators());
+  const [records, setRecords] = useState(
+    indicatorService.getAllIndicators("OutcomeIndicators")
+  );
   const [filterFn, setFilterFn] = useState({
     fn: (items) => {
       return items;
@@ -88,7 +90,9 @@ export default function Outcomes() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const updatedRecords = await indicatorService.getAllIndicators();
+      const updatedRecords = await indicatorService.getAllIndicators(
+        "OutcomeIndicators"
+      );
       setRecords(updatedRecords || []);
     };
 
@@ -124,30 +128,30 @@ export default function Outcomes() {
   const addOrEdit = (data, resetForm) => {
     data.indicatorId = data.id;
     if (data.indicatorId === undefined) {
-      indicatorService.insertIndicator(data);
-    } else indicatorService.updateIndicator(data);
+      indicatorService.insertIndicator(data, "OutcomeIndicators");
+    } else indicatorService.updateIndicator(data, "OutcomeIndicators");
     resetForm();
     setRecordForEdit(null);
     setOpenPopup(false);
     setRecords(
       indicatorService
-        .getAllIndicators()
+        .getAllIndicators("OutcomeIndicators")
         .map((x) => ({ ...x, id: x.indicatorId }))
     );
   };
 
   const addOrEditOutcome = (data, resetForm) => {
-    data.indicatorId = data.id;
+    data.outcomeId = data.id;
     if (data.indicatorId === undefined) {
-      indicatorService.insertIndicator(data);
-    } else indicatorService.updateIndicator(data);
+      indicatorService.insertIndicator(data, "OutcomesData");
+    } else indicatorService.insertIndicator(data, "OutcomesData");
     resetForm();
     setRecordForEdit(null);
     setOpenPopup(false);
     setRecords(
       indicatorService
-        .getAllIndicators()
-        .map((x) => ({ ...x, id: x.indicatorId }))
+        .getAllIndicators("OutcomesData")
+        .map((x) => ({ ...x, id: x.outcomeId }))
     );
   };
 
@@ -156,10 +160,28 @@ export default function Outcomes() {
     setOpenPopup(true);
   };
 
+  const openInPopupOutcome = (item) => {
+    setRecordForEditOutcome(item);
+    setOutcomeOpenPopup(true);
+  };
+
   const handleDelete = async (indicatorId) => {
     if (window.confirm("Are you sure to delete this record?")) {
-      const updatedIndicators = indicatorService.deleteIndicator(indicatorId);
+      const updatedIndicators = indicatorService.deleteIndicator(
+        indicatorId,
+        "OutcomeIndicators"
+      );
       setRecords(updatedIndicators);
+    }
+  };
+
+  const handleDeleteOutcome = async (outcomeId) => {
+    if (window.confirm("Are you sure to delete this record?")) {
+      const updatedIndicators = indicatorService.deleteIndicator(
+        outcomeId,
+        "OutcomesData"
+      );
+      setOutcomeRecords(updatedIndicators);
     }
   };
 
@@ -204,22 +226,26 @@ export default function Outcomes() {
                 key={item.id}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
-                <TableCell style={{ width: "20%" }}>{item.outcomeId}</TableCell>
-                <TableCell style={{ width: "67%" }}>{item.outcome}</TableCell>
-                <TableCell>
+                <TableCell style={{ width: "20%" }} key={item.id}>
+                  {item.outcomeId}
+                </TableCell>
+                <TableCell style={{ width: "67%" }} key={item.id}>
+                  {item.outcome}
+                </TableCell>
+                <TableCell key={item.id}>
                   <Controls.ActionButton
                     color="primary"
-                    // onClick={() => {
-                    //   openInPopup(item);
-                    // }}
+                    onClick={() => {
+                      openInPopupOutcome(item); ///outcomeOpenPopup
+                    }}
                   >
                     <EditOutlinedIcon fontSize="small" />
                   </Controls.ActionButton>
                   <Controls.ActionButton
                     color="secondary"
-                    // onClick={() => {
-                    //   handleDelete(item.outcomeId);
-                    // }}
+                    onClick={() => {
+                      handleDeleteOutcome(item.outcomeId);
+                    }}
                   >
                     <CloseIcon fontSize="small" />
                   </Controls.ActionButton>
@@ -272,13 +298,13 @@ export default function Outcomes() {
           <TableBody>
             {indicatorRecordsAfterPagingAndSorting().map((item) => (
               <TableRow key={item.id}>
-                <TableCell>{item.outcomeId}</TableCell>
-                <TableCell>{item.indicatorId}</TableCell>
-                <TableCell>{item.indicator}</TableCell>
-                <TableCell>{item.calculation}</TableCell>
-                <TableCell>{item.disaggregation}</TableCell>
-                <TableCell>{item.target}</TableCell>
-                <TableCell>
+                <TableCell key={item.id}>{item.outcomeId}</TableCell>
+                <TableCell key={item.id}>{item.indicatorId}</TableCell>
+                <TableCell key={item.id}>{item.indicator}</TableCell>
+                <TableCell key={item.id}>{item.calculation}</TableCell>
+                <TableCell key={item.id}>{item.disaggregation}</TableCell>
+                <TableCell key={item.id}>{item.target}</TableCell>
+                <TableCell key={item.id}>
                   <Controls.ActionButton
                     color="primary"
                     onClick={() => {

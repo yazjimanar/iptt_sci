@@ -70,26 +70,45 @@ function App() {
     },
   });
 
+  const [allLocalData, setAllLocalData] = useState({});
+
   const updateProjectData = (newData) => {
     setProjectData((prevData) => ({ ...prevData, ...newData }));
   };
 
+  // useEffect(() => {
+  //   // localStorage.clear();
+  //   const storedData = JSON.parse(localStorage.getItem("projectData"));
+  //   const storedIndicator = JSON.parse(
+  //     localStorage.getItem("outcomeIndicators")
+  //   );
+  //   if (storedData) {
+  //     setProjectData(storedData);
+  //   }
+  //   if (storedIndicator) {
+  //     setOutcomeIndicators(storedIndicator);
+  //   }
+  // }, []);
+
   useEffect(() => {
     // localStorage.clear();
-    const storedData = JSON.parse(localStorage.getItem("projectData"));
-    const storedIndicator = JSON.parse(
-      localStorage.getItem("outcomeIndicators")
-    );
-    if (storedData) {
-      setProjectData(storedData);
-    }
-    if (storedIndicator) {
-      setOutcomeIndicators(storedIndicator);
-    }
+    // Function to get all data stored locally
+    const getAllLocalData = () => {
+      const data = {};
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        const value = localStorage.getItem(key);
+        data[key] = JSON.parse(value);
+      }
+      return data;
+    };
+
+    // Retrieve all local data and set it in the component state
+    const localData = getAllLocalData();
+    setAllLocalData(localData);
   }, []);
 
-  console.log(outcomeIndicators);
-  console.log(projectData);
+  console.log(allLocalData);
 
   useEffect(() => {
     localStorage.setItem("projectData", JSON.stringify(projectData));

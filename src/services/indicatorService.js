@@ -9,31 +9,30 @@ export const getCalculationCollection = () => [
   { id: "3", title: "MAX" },
 ];
 
-export function insertIndicator(data) {
+export function insertIndicator(data, name) {
   let Indicators = getAllIndicators();
   data["indicatorId"] = generateIndicatorId();
   data["calculationId"] =
     data.calculation !== undefined ? data.calculation : "";
   Indicators.push(data);
-  localStorage.setItem(KEYS.Indicators, JSON.stringify(Indicators));
-  // console.log(Indicators);
+  localStorage.setItem(name, JSON.stringify(Indicators));
 }
 
-export function updateIndicator(data) {
-  let Indicators = getAllIndicators();
+export function updateIndicator(data, name) {
+  let Indicators = getAllIndicators(name);
   let recordIndex = Indicators.findIndex(
-    (x) => x.indicatorId === data.indicatorId
+    (x) => x.indicatorId === data.indicatorIds
   ); // Corrected property name
   Indicators[recordIndex] = { ...data };
-  localStorage.setItem(KEYS.Indicators, JSON.stringify(Indicators));
+  localStorage.setItem(name, JSON.stringify(Indicators));
 }
 
-export function deleteIndicator(indicatorId) {
-  let Indicators = getAllIndicators();
+export function deleteIndicator(indicatorId, name) {
+  let Indicators = getAllIndicators(name);
   let updatedIndicators = Indicators.filter(
     (x) => x.indicatorId !== indicatorId
   );
-  localStorage.setItem(KEYS.Indicators, JSON.stringify(updatedIndicators));
+  localStorage.setItem(name, JSON.stringify(updatedIndicators));
   return updatedIndicators;
 }
 
@@ -45,10 +44,10 @@ export function generateIndicatorId() {
   return id;
 }
 
-export function getAllIndicators() {
-  if (localStorage.getItem(KEYS.Indicators) == null)
-    localStorage.setItem(KEYS.Indicators, JSON.stringify([]));
-  let Indicators = JSON.parse(localStorage.getItem(KEYS.Indicators));
+export function getAllIndicators(name) {
+  if (localStorage.getItem(name) == null)
+    localStorage.setItem(name, JSON.stringify([]));
+  let Indicators = JSON.parse(localStorage.getItem(name));
 
   // Ensure that calculations array is defined
   let calculations = getCalculationCollection();
