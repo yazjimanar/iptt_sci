@@ -114,7 +114,7 @@ export default function Outcomes() {
 
   const handleSearchOutcome = (e) => {
     let target = e.target;
-    setFilterFn({
+    setOutcomeFilterFn({
       fn: (items) => {
         if (target.value === "") return items;
         else
@@ -141,17 +141,18 @@ export default function Outcomes() {
   };
 
   const addOrEditOutcome = (data, resetForm) => {
-    data.outcomeId = data.id;
+    data.indicatorId = data.id;
+
     if (data.indicatorId === undefined) {
       indicatorService.insertIndicator(data, "OutcomesData");
-    } else indicatorService.insertIndicator(data, "OutcomesData");
+    } else indicatorService.updateIndicator(data, "OutcomesData");
     resetForm();
-    setRecordForEdit(null);
-    setOpenPopup(false);
-    setRecords(
+    setRecordForEditOutcome(null);
+    setOutcomeOpenPopup(false);
+    setOutcomeRecords(
       indicatorService
         .getAllIndicators("OutcomesData")
-        .map((x) => ({ ...x, id: x.outcomeId }))
+        .map((x) => ({ ...x, id: x.indicatorId }))
     );
   };
 
@@ -221,18 +222,18 @@ export default function Outcomes() {
         <OTblContainer>
           <OTblHead />
           <TableBody>
-            {outcomeRecordsAfterPagingAndSorting().map((item) => (
+            {outcomeRecordsAfterPagingAndSorting().map((item, index) => (
               <TableRow
-                key={item.id}
+                key={index}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
-                <TableCell style={{ width: "20%" }} key={item.id}>
-                  {item.outcomeId}
+                <TableCell style={{ width: "20%" }} key={index}>
+                  {item.indicatorId}
                 </TableCell>
-                <TableCell style={{ width: "67%" }} key={item.id}>
+                <TableCell style={{ width: "67%" }} key={index}>
                   {item.outcome}
                 </TableCell>
-                <TableCell key={item.id}>
+                <TableCell key={index}>
                   <Controls.ActionButton
                     color="primary"
                     onClick={() => {
@@ -244,7 +245,7 @@ export default function Outcomes() {
                   <Controls.ActionButton
                     color="secondary"
                     onClick={() => {
-                      handleDeleteOutcome(item.outcomeId);
+                      handleDeleteOutcome(item.indicatorId);
                     }}
                   >
                     <CloseIcon fontSize="small" />
@@ -296,15 +297,15 @@ export default function Outcomes() {
         <TblContainer>
           <TblHead />
           <TableBody>
-            {indicatorRecordsAfterPagingAndSorting().map((item) => (
-              <TableRow key={item.id}>
-                <TableCell key={item.id}>{item.outcomeId}</TableCell>
-                <TableCell key={item.id}>{item.indicatorId}</TableCell>
-                <TableCell key={item.id}>{item.indicator}</TableCell>
-                <TableCell key={item.id}>{item.calculation}</TableCell>
-                <TableCell key={item.id}>{item.disaggregation}</TableCell>
-                <TableCell key={item.id}>{item.target}</TableCell>
-                <TableCell key={item.id}>
+            {indicatorRecordsAfterPagingAndSorting().map((item, index) => (
+              <TableRow key={index}>
+                <TableCell key={index}>{item.outcomeId}</TableCell>
+                <TableCell key={index}>{item.indicatorId}</TableCell>
+                <TableCell key={index}>{item.indicator}</TableCell>
+                <TableCell key={index}>{item.calculation}</TableCell>
+                <TableCell key={index}>{item.disaggregation}</TableCell>
+                <TableCell key={index}>{item.target}</TableCell>
+                <TableCell key={index}>
                   <Controls.ActionButton
                     color="primary"
                     onClick={() => {

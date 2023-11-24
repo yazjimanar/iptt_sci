@@ -10,7 +10,7 @@ export const getCalculationCollection = () => [
 ];
 
 export function insertIndicator(data, name) {
-  let Indicators = getAllIndicators();
+  let Indicators = getAllIndicators(name);
   data["indicatorId"] = generateIndicatorId();
   data["calculationId"] =
     data.calculation !== undefined ? data.calculation : "";
@@ -21,7 +21,7 @@ export function insertIndicator(data, name) {
 export function updateIndicator(data, name) {
   let Indicators = getAllIndicators(name);
   let recordIndex = Indicators.findIndex(
-    (x) => x.indicatorId === data.indicatorIds
+    (x) => x.indicatorId === data.indicatorId
   ); // Corrected property name
   Indicators[recordIndex] = { ...data };
   localStorage.setItem(name, JSON.stringify(Indicators));
@@ -33,6 +33,7 @@ export function deleteIndicator(indicatorId, name) {
     (x) => x.indicatorId !== indicatorId
   );
   localStorage.setItem(name, JSON.stringify(updatedIndicators));
+  console.log(updatedIndicators);
   return updatedIndicators;
 }
 

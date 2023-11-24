@@ -4,7 +4,7 @@ import Controls from "../../component/controls/Controls";
 import { useForm, Form } from "../../component/useForm";
 
 const initialFValues = {
-  outcomeId: 1,
+  indicatorId: 1,
   outcome: "",
 };
 
@@ -48,9 +48,9 @@ export default function OutcomeForm(props) {
           <Controls.Input
             name="outcomeId"
             label="ID"
-            value={values.outcomeId}
+            value={values.indicatorId}
             onChange={handleInputChange}
-            error={errors.outcomeId}
+            error={errors.indicatorId}
             style={{ width: "10%" }}
           />
           <Controls.Input
