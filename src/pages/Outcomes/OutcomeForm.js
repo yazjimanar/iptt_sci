@@ -4,7 +4,7 @@ import Controls from "../../component/controls/Controls";
 import { useForm, Form } from "../../component/useForm";
 
 const initialFValues = {
-  indicatorId: 1,
+  outcomeId: 0,
   outcome: "",
 };
 
@@ -24,7 +24,19 @@ export default function OutcomeForm(props) {
   };
 
   const { values, setValues, errors, setErrors, handleInputChange, resetForm } =
-    useForm(initialFValues, true, validate);
+    useForm(recordForEditOutcome || initialFValues, true, validate);
+
+  useEffect(() => {
+    if (recordForEditOutcome && recordForEditOutcome.outcomeId !== undefined) {
+      setValues((prevValues) => ({
+        ...prevValues,
+        ...recordForEditOutcome,
+      }));
+    } else {
+      // Set default values when recordForEditOutcome is not defined
+      setValues(initialFValues);
+    }
+  }, [recordForEditOutcome, setValues]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -33,27 +45,12 @@ export default function OutcomeForm(props) {
     }
   };
 
-  useEffect(() => {
-    if (recordForEditOutcome != null) {
-      setValues({
-        ...recordForEditOutcome,
-      });
-    }
-  }, [recordForEditOutcome, setValues]);
-
   return (
     <Form onSubmit={handleSubmit}>
       <Grid container>
         <Grid item xs={12}>
           <Controls.Input
-            name="outcomeId"
-            label="ID"
-            value={values.indicatorId}
-            onChange={handleInputChange}
-            error={errors.indicatorId}
-            style={{ width: "10%" }}
-          />
-          <Controls.Input
+            required
             name="outcome"
             label="Outcome"
             value={values.outcome}
@@ -65,7 +62,7 @@ export default function OutcomeForm(props) {
             style={{
               display: "flex",
               alignItems: "center",
-              justifyItems: "center",
+              justifyContent: "center",
               flexDirection: "column",
             }}
           >

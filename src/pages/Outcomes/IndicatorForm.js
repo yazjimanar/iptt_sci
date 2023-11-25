@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Grid } from "@material-ui/core";
 import Controls from "../../component/controls/Controls";
 import { useForm, Form } from "../../component/useForm";
@@ -16,6 +16,7 @@ const initialFValues = {
 
 export default function IndicatorForm(props) {
   const { addOrEdit, recordForEdit } = props;
+  const [outcomeOptions, setOutcomeOptions] = useState([]);
 
   const validate = (fieldValues = values) => {
     let temp = { ...errors };
@@ -53,11 +54,34 @@ export default function IndicatorForm(props) {
       });
     }
   }, [recordForEdit, setValues]);
+  useEffect(() => {
+    // Fetch outcome options from local storage or API
+    const outcomes = indicatorService.getAllIndicators("OutcomesData");
+    setOutcomeOptions(outcomes);
+
+    if (recordForEdit != null) {
+      setValues({
+        ...recordForEdit,
+        calculation: recordForEdit.calculationId || "",
+      });
+    }
+  }, [recordForEdit, setValues]);
 
   return (
     <Form onSubmit={handleSubmit}>
       <Grid container>
         <Grid item xs={6}>
+          <Controls.Select
+            name="outcomeId"
+            label="Outcome ID"
+            value={values.outcomeId}
+            onChange={handleInputChange}
+            options={outcomeOptions.map((outcome) => ({
+              id: outcome.indicatorId,
+              title: outcome.outcome,
+            }))}
+            error={errors.outcomeId}
+          />
           <Controls.Input
             name="indicator"
             label="Indicator"
@@ -66,6 +90,7 @@ export default function IndicatorForm(props) {
             error={errors.indicator}
           />
           <Controls.Input
+            type="number"
             name="target"
             label="Target"
             value={values.target}

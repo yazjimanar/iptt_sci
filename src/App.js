@@ -59,60 +59,50 @@ function App() {
     },
     outcomes: [],
   });
-  const [outcomeIndicators, setOutcomeIndicators] = useState({
-    outcomeIndicators: {
-      outcomeId: "",
-      indicatorId: "",
-      indicator: "",
-      calculation: "",
-      disaggregation: "",
-      target: "",
-    },
-  });
+  // const [outcomeIndicators, setOutcomeIndicators] = useState({
+  //   outcomeIndicators: {
+  //     outcomeId: "",
+  //     indicatorId: "",
+  //     indicator: "",
+  //     calculation: "",
+  //     disaggregation: "",
+  //     target: "",
+  //   },
+  // });
 
-  const [allLocalData, setAllLocalData] = useState({});
+  // const [allLocalData, setAllLocalData] = useState({});
 
   const updateProjectData = (newData) => {
     setProjectData((prevData) => ({ ...prevData, ...newData }));
   };
 
   // useEffect(() => {
-  //   // localStorage.clear();
-  //   const storedData = JSON.parse(localStorage.getItem("projectData"));
-  //   const storedIndicator = JSON.parse(
-  //     localStorage.getItem("outcomeIndicators")
-  //   );
-  //   if (storedData) {
-  //     setProjectData(storedData);
-  //   }
-  //   if (storedIndicator) {
-  //     setOutcomeIndicators(storedIndicator);
-  //   }
+  //   const getAllLocalData = () => {
+  //     const data = {};
+  //     for (let i = 0; i < localStorage.length; i++) {
+  //       const key = localStorage.key(i);
+  //       const value = localStorage.getItem(key);
+  //       data[key] = JSON.parse(value);
+  //     }
+  //     return data;
+  //   };
+
+  //   const localData = getAllLocalData();
+  //   setAllLocalData(localData);
   // }, []);
 
-  useEffect(() => {
-    // localStorage.clear();
-    // Function to get all data stored locally
-    const getAllLocalData = () => {
-      const data = {};
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        const value = localStorage.getItem(key);
-        data[key] = JSON.parse(value);
-      }
-      return data;
-    };
-
-    // Retrieve all local data and set it in the component state
-    const localData = getAllLocalData();
-    setAllLocalData(localData);
-  }, []);
-
-  console.log(allLocalData);
+  // console.log(allLocalData);
 
   useEffect(() => {
     localStorage.setItem("projectData", JSON.stringify(projectData));
   }, [projectData]);
+
+  // before closing the app clear the local storage
+  window.addEventListener("beforeunload", (ev) => {
+    ev.preventDefault();
+    localStorage.clear();
+    return (ev.returnValue = "Are you sure you want to close?");
+  });
 
   return (
     <ThemeProvider theme={theme}>

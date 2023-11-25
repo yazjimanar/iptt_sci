@@ -10,6 +10,8 @@ export const getCalculationCollection = () => [
 ];
 
 export function insertIndicator(data, name) {
+  console.log("Inserting indicator:", data);
+
   let Indicators = getAllIndicators(name);
   data["indicatorId"] = generateIndicatorId();
   data["calculationId"] =
@@ -61,3 +63,18 @@ export function getAllIndicators(name) {
         : "",
   }));
 }
+
+export const generateNextIndicatorId = (outcomeId) => {
+  // Retrieve existing indicators for the given outcomeId
+  const existingIndicators = getAllIndicators("OutcomeIndicators").filter(
+    (indicator) => indicator.outcomeId === outcomeId
+  );
+
+  // Calculate the next available indicatorId
+  const nextIndicatorNumber = existingIndicators.length + 1;
+
+  // Combine outcomeId and nextIndicatorNumber to form the new indicatorId
+  const nextIndicatorId = `${outcomeId}.${nextIndicatorNumber}`;
+
+  return nextIndicatorId;
+};

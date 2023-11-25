@@ -20,6 +20,7 @@ import Popup from "../../component/Popup";
 import EditOutlinedIcon from "@material-ui/icons/EditOutlined";
 import CloseIcon from "@mui/icons-material/Close";
 import OutputIcon from "@mui/icons-material/Output";
+import Tooltip from "@mui/material/Tooltip";
 
 const useStyles = makeStyles((theme) => ({
   pageContent: {
@@ -125,6 +126,34 @@ export default function Outcomes() {
     });
   };
 
+  const handleClearSearchOutcome = () => {
+    // Clear the search input
+    setOutcomeFilterFn({
+      fn: (items) => {
+        return items;
+      },
+    });
+
+    // Clear the search input field
+    const searchInput = document.getElementById("search-outcome-input");
+    searchInput.value = "";
+    searchInput.dispatchEvent(new Event("input", { bubbles: true })); // Trigger input event
+  };
+
+  const handleClearSearch = () => {
+    // Clear the search input
+    setFilterFn({
+      fn: (items) => {
+        return items;
+      },
+    });
+
+    // Clear the search input field
+    const searchInput = document.getElementById("search-outcome-input1");
+    searchInput.value = "";
+    searchInput.dispatchEvent(new Event("input", { bubbles: true })); // Trigger input event
+  };
+
   const addOrEdit = (data, resetForm) => {
     data.indicatorId = data.id;
     if (data.indicatorId === undefined) {
@@ -196,12 +225,23 @@ export default function Outcomes() {
       <Paper className={classes.pageContent}>
         <Toolbar>
           <Controls.Input
+            id="search-outcome-input"
             label="Search Outcome"
             className={classes.searchInput}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
                   <Search />
+                </InputAdornment>
+              ),
+              endAdornment: (
+                <InputAdornment position="end">
+                  <Controls.ActionButton
+                    color="secondary"
+                    onClick={handleClearSearchOutcome}
+                  >
+                    <CloseIcon fontSize="small" />
+                  </Controls.ActionButton>
                 </InputAdornment>
               ),
             }}
@@ -228,16 +268,18 @@ export default function Outcomes() {
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
                 <TableCell style={{ width: "20%" }} key={index}>
-                  {item.indicatorId}
+                  {item?.indicatorId !== undefined ? item.indicatorId : "N/A"}
                 </TableCell>
                 <TableCell style={{ width: "67%" }} key={index}>
-                  {item.outcome}
+                  {item?.outcome !== undefined ? item.outcome : "N/A"}
                 </TableCell>
                 <TableCell key={index}>
                   <Controls.ActionButton
                     color="primary"
                     onClick={() => {
-                      openInPopupOutcome(item); ///outcomeOpenPopup
+                      if (item && item.indicatorId !== undefined) {
+                        openInPopupOutcome(item);
+                      }
                     }}
                   >
                     <EditOutlinedIcon fontSize="small" />
@@ -245,7 +287,9 @@ export default function Outcomes() {
                   <Controls.ActionButton
                     color="secondary"
                     onClick={() => {
-                      handleDeleteOutcome(item.indicatorId);
+                      if (item && item.indicatorId !== undefined) {
+                        handleDeleteOutcome(item.indicatorId);
+                      }
                     }}
                   >
                     <CloseIcon fontSize="small" />
@@ -263,7 +307,7 @@ export default function Outcomes() {
         setOpenPopup={setOutcomeOpenPopup}
       >
         <OutcomeForm
-          recordForEditOutcome={recordForEditOutcome}
+          recordForEditOutcome={recordForEditOutcome || undefined}
           addOrEditOutcome={addOrEditOutcome}
         />
       </Popup>
@@ -271,6 +315,7 @@ export default function Outcomes() {
       <Paper className={classes.pageContent}>
         <Toolbar>
           <Controls.Input
+            id="search-outcome-input1"
             label="Search Indicator"
             className={classes.searchInput}
             InputProps={{
@@ -279,20 +324,37 @@ export default function Outcomes() {
                   <Search />
                 </InputAdornment>
               ),
+              endAdornment: (
+                <InputAdornment position="end">
+                  <Controls.ActionButton
+                    color="secondary"
+                    onClick={handleClearSearch}
+                  >
+                    <CloseIcon fontSize="small" />
+                  </Controls.ActionButton>
+                </InputAdornment>
+              ),
             }}
             onChange={handleSearch}
           />
-          <Controls.Button
-            text="Add New Indicator"
-            style={{ borderRadius: "20px" }}
-            variant="outlined"
-            startIcon={<AddIcon />}
-            className={classes.newButton}
-            onClick={() => {
-              setOpenPopup(true);
-              setRecordForEdit(null);
-            }}
-          />
+          <Tooltip
+            title={
+              outcomeRecords.length === 0 ? "Please add an outcome first" : ""
+            }
+          >
+            <Controls.Button
+              text="Add New Indicator"
+              style={{ borderRadius: "20px" }}
+              variant="outlined"
+              startIcon={<AddIcon />}
+              className={classes.newButton}
+              onClick={() => {
+                setOpenPopup(true);
+                setRecordForEdit(null);
+              }}
+              disabled={outcomeRecords.length === 0}
+            />
+          </Tooltip>
         </Toolbar>
         <TblContainer>
           <TblHead />
