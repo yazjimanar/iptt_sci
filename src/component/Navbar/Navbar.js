@@ -7,10 +7,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Toolbar from "@mui/material/Toolbar";
 import { mainNavbarItems } from "../Navbar/consts/navbarItems";
-import { Hidden } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-
-const drawerWidth = 320;
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -22,10 +19,10 @@ const Navbar = () => {
         keepMounted: true,
       }}
       sx={{
-        width: drawerWidth,
+        width: "13vw",
         flexShrink: 0,
         "& .MuiDrawer-paper": {
-          width: 220,
+          width: "12vw",
           boxSizing: "border-box",
           backgroundColor: "#101F33",
           color: "rgba(255, 255, 255, 0.7)",

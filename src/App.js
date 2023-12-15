@@ -2,6 +2,7 @@ import "./App.css";
 import GeneralInfoPage from "./component/screeens/generalInfoScreen";
 import React, { useState, useEffect } from "react";
 import Outcomes from "./pages/Outcomes/Outcomes";
+import Output from "./pages/Outputs/Output";
 import Navbar from "./component/Navbar/Navbar";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Grid } from "@mui/material";
@@ -39,7 +40,7 @@ const theme = createTheme({
 
 const useStyles = makeStyles({
   appMain: {
-    paddingLeft: "235px",
+    paddingLeft: "13vw",
     width: "100%",
   },
 });
@@ -70,28 +71,28 @@ function App() {
   //   },
   // });
 
-  // const [allLocalData, setAllLocalData] = useState({});
+  const [allLocalData, setAllLocalData] = useState({});
 
   const updateProjectData = (newData) => {
     setProjectData((prevData) => ({ ...prevData, ...newData }));
   };
 
-  // useEffect(() => {
-  //   const getAllLocalData = () => {
-  //     const data = {};
-  //     for (let i = 0; i < localStorage.length; i++) {
-  //       const key = localStorage.key(i);
-  //       const value = localStorage.getItem(key);
-  //       data[key] = JSON.parse(value);
-  //     }
-  //     return data;
-  //   };
+  useEffect(() => {
+    const getAllLocalData = () => {
+      const data = {};
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        const value = localStorage.getItem(key);
+        data[key] = JSON.parse(value);
+      }
+      return data;
+    };
 
-  //   const localData = getAllLocalData();
-  //   setAllLocalData(localData);
-  // }, []);
+    const localData = getAllLocalData();
+    setAllLocalData(localData);
+  }, []);
 
-  // console.log(allLocalData);
+  console.log(allLocalData);
 
   useEffect(() => {
     localStorage.setItem("projectData", JSON.stringify(projectData));
@@ -126,6 +127,18 @@ function App() {
               element={
                 <div className={classes.appMain}>
                   <Outcomes
+                    projectData={projectData}
+                    updateProjectData={updateProjectData}
+                  />
+                </div>
+              }
+            />
+            <Route
+              path="/outputs"
+              exact
+              element={
+                <div className={classes.appMain}>
+                  <Output
                     projectData={projectData}
                     updateProjectData={updateProjectData}
                   />

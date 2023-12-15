@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import IndicatorForm from "./IndicatorForm";
-import OutcomeForm from "./OutcomeForm";
+import OutputForm from "./OutputForm";
 import PageHeader from "../../component/PageHeader";
 import {
   Paper,
@@ -19,8 +19,8 @@ import AddIcon from "@mui/icons-material/Add";
 import Popup from "../../component/Popup";
 import EditOutlinedIcon from "@material-ui/icons/EditOutlined";
 import CloseIcon from "@mui/icons-material/Close";
+import OutputIcon from "@mui/icons-material/Output";
 import Tooltip from "@mui/material/Tooltip";
-import DownloadDoneIcon from "@mui/icons-material/DownloadDone";
 
 const useStyles = makeStyles((theme) => ({
   pageContent: {
@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const headCells = [
-  { id: "outcomeId", label: "Outcome ID" },
+  { id: "outputId", label: "Outcome ID" },
   { id: "indicatorId", label: "Indicator ID" },
   { id: "indicator", label: "Indicator" },
   { id: "calculation", label: "Calculation Methode" },
@@ -46,34 +46,35 @@ const headCells = [
   { id: "actions", label: "Actions", disableSorting: true },
 ];
 
-const outcomeHeadCells = [
+const outputHeadCells = [
   { id: "outcomeId", label: "Outcome ID" },
-  { id: "outcome", label: "Outcome" },
+  { id: "outputId", label: "Output ID" },
+  { id: "output", label: "Output" },
   { id: "actions", label: "Actions", disableSorting: true },
 ];
 
-export default function Outcomes() {
+export default function Output() {
   const classes = useStyles();
   const [recordForEdit, setRecordForEdit] = useState(null);
-  const [recordForEditOutcome, setRecordForEditOutcome] = useState(null);
-  const [outcomeRecords, setOutcomeRecords] = useState(
-    indicatorService.getAllIndicators("OutcomesData")
+  const [recordForEditOutput, setRecordForEditOutput] = useState(null);
+  const [outputRecords, setOutputRecords] = useState(
+    indicatorService.getAllIndicators("OutputsData")
   );
   const [records, setRecords] = useState(
-    indicatorService.getAllIndicators("OutcomeIndicators")
+    indicatorService.getAllIndicators("OutputIndicators")
   );
   const [filterFn, setFilterFn] = useState({
     fn: (items) => {
       return items;
     },
   });
-  const [outcomeFilterFn, setOutcomeFilterFn] = useState({
+  const [outputFilterFn, setOutputFilterFn] = useState({
     fn: (items) => {
       return items;
     },
   });
   const [openPopup, setOpenPopup] = useState(false);
-  const [outcomeOpenPopup, setOutcomeOpenPopup] = useState(false);
+  const [outputOpenPopup, setOutputOpenPopup] = useState(false);
 
   const {
     TblContainer,
@@ -86,13 +87,13 @@ export default function Outcomes() {
     TblContainer: OTblContainer,
     TblHead: OTblHead,
     TblPagination: OTblPagination,
-    recordsAfterPagingAndSorting: outcomeRecordsAfterPagingAndSorting,
-  } = useTable(outcomeRecords, outcomeHeadCells, outcomeFilterFn);
+    recordsAfterPagingAndSorting: outputRecordsAfterPagingAndSorting,
+  } = useTable(outputRecords, outputHeadCells, outputFilterFn);
 
   useEffect(() => {
     const fetchData = async () => {
       const updatedRecords = await indicatorService.getAllIndicators(
-        "OutcomeIndicators"
+        "OutputIndicators"
       );
       setRecords(updatedRecords || []);
     };
@@ -113,22 +114,22 @@ export default function Outcomes() {
     });
   };
 
-  const handleSearchOutcome = (e) => {
+  const handleSearchOutput = (e) => {
     let target = e.target;
-    setOutcomeFilterFn({
+    setOutputFilterFn({
       fn: (items) => {
         if (target.value === "") return items;
         else
           return items.filter((x) =>
-            x.outcome.toLowerCase().includes(target.value)
+            x.output.toLowerCase().includes(target.value)
           );
       },
     });
   };
 
-  const handleClearSearchOutcome = () => {
+  const handleClearSearchOutput = () => {
     // Clear the search input
-    setOutcomeFilterFn({
+    setOutputFilterFn({
       fn: (items) => {
         return items;
       },
@@ -155,17 +156,16 @@ export default function Outcomes() {
   };
 
   const addOrEdit = (data, resetForm) => {
-    const outcomeId = data.outcomeId;
-    const indicators = indicatorService.getIndicatorsForOutcome(outcomeId);
-    console.log(indicators.length);
+    const outputId = data.outputId;
+    const indicators = indicatorService.getIndicatorsForOutput(outputId);
     const nextIndicatorNumber = indicators.length + 1;
-    const nextIndicatorId = `${outcomeId}.${nextIndicatorNumber}`;
+    const nextIndicatorId = `${outputId}.${nextIndicatorNumber}`;
 
     if (!data.indicatorId) {
       data.indicatorId = String(nextIndicatorId);
-      indicatorService.insertIndicatorOutcome(data, "OutcomeIndicators");
+      indicatorService.insertIndicatorOutput(data, "OutputIndicators");
     } else {
-      indicatorService.updateIndicator(data, "OutcomeIndicators");
+      indicatorService.updateIndicator(data, "OutputIndicators");
     }
 
     resetForm();
@@ -173,69 +173,76 @@ export default function Outcomes() {
     setOpenPopup(false);
     setRecords(
       indicatorService
-        .getAllIndicators("OutcomeIndicators")
+        .getAllIndicators("OutputIndicators")
         .map((x) => ({ ...x, id: x.indicatorId }))
     );
   };
 
-  const addOrEditOutcome = (data, resetForm) => {
-    data.indicatorId = data.id;
+  const addOrEditOutput = (data, resetForm) => {
+    const outcomeId = data.outcomeId;
+    const indicators = indicatorService.getOutcome(outcomeId);
+
+    const nextIndicatorNumber = indicators.length + 1;
+    const nextIndicatorId = `${outcomeId}.${nextIndicatorNumber}`;
 
     if (data.indicatorId === undefined) {
-      indicatorService.insertIndicator(data, "OutcomesData");
-    } else indicatorService.updateIndicator(data, "OutcomesData");
+      data.indicatorId = String(nextIndicatorId);
+      indicatorService.insertIndicatorOutput(data, "OutputsData");
+    } else {
+      indicatorService.updateIndicator(data, "OutputsData");
+    }
+
     resetForm();
-    setRecordForEditOutcome(null);
-    setOutcomeOpenPopup(false);
-    setOutcomeRecords(
+    setRecordForEditOutput(null);
+    setOutputOpenPopup(false);
+    setOutputRecords(
       indicatorService
-        .getAllIndicators("OutcomesData")
+        .getAllIndicators("OutputsData")
         .map((x) => ({ ...x, id: x.indicatorId }))
     );
   };
-
   const openInPopup = (item) => {
     setRecordForEdit(item);
     setOpenPopup(true);
   };
 
-  const openInPopupOutcome = (item) => {
-    setRecordForEditOutcome(item);
-    setOutcomeOpenPopup(true);
+  const openInPopupOutput = (item) => {
+    setRecordForEditOutput(item);
+    setOutputOpenPopup(true);
   };
 
   const handleDelete = async (indicatorId) => {
     if (window.confirm("Are you sure to delete this record?")) {
       const updatedIndicators = indicatorService.deleteIndicator(
         indicatorId,
-        "OutcomeIndicators"
+        "OutputIndicators"
       );
       setRecords(updatedIndicators);
     }
   };
 
-  const handleDeleteOutcome = async (outcomeId) => {
+  const handleDeleteOutput = async (outputId) => {
     if (window.confirm("Are you sure to delete this record?")) {
       const updatedIndicators = indicatorService.deleteIndicator(
-        outcomeId,
-        "OutcomesData"
+        outputId,
+        "OutputsData"
       );
-      setOutcomeRecords(updatedIndicators);
+      setOutputRecords(updatedIndicators);
     }
   };
 
   return (
     <>
       <PageHeader
-        title="Outcome Page"
-        subTitle="Define the outcomes of your project with indicators"
-        icon={<DownloadDoneIcon fontSize="large" />}
+        title="Output Page"
+        subTitle="Define the outputs of your project with indicators"
+        icon={<OutputIcon fontSize="large" />}
       />
       <Paper className={classes.pageContent}>
         <Toolbar>
           <Controls.Input
             id="search-outcome-input"
-            label="Search Outcome"
+            label="Search Output"
             className={classes.searchInput}
             InputProps={{
               startAdornment: (
@@ -247,47 +254,50 @@ export default function Outcomes() {
                 <InputAdornment position="end">
                   <Controls.ActionButton
                     color="secondary"
-                    onClick={handleClearSearchOutcome}
+                    onClick={handleClearSearchOutput}
                   >
                     <CloseIcon fontSize="small" />
                   </Controls.ActionButton>
                 </InputAdornment>
               ),
             }}
-            onChange={handleSearchOutcome}
+            onChange={handleSearchOutput}
           />
           <Controls.Button
-            text="Add New Outcome"
+            text="Add New Output"
             style={{ borderRadius: "20px" }}
             variant="outlined"
             startIcon={<AddIcon />}
             className={classes.newButton}
             onClick={() => {
-              setOutcomeOpenPopup(true);
-              setRecordForEditOutcome(null);
+              setOutputOpenPopup(true);
+              setRecordForEditOutput(null);
             }}
           />
         </Toolbar>
         <OTblContainer>
           <OTblHead />
           <TableBody>
-            {outcomeRecordsAfterPagingAndSorting().map((item, index) => (
+            {outputRecordsAfterPagingAndSorting().map((item, index) => (
               <TableRow
                 key={index}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
-                <TableCell style={{ width: "20%" }} key={index}>
+                <TableCell style={{ width: "12%" }} key={index}>
+                  {item?.outcomeId !== undefined ? item.outcomeId : "N/A"}
+                </TableCell>
+                <TableCell style={{ width: "12%" }} key={index}>
                   {item?.indicatorId !== undefined ? item.indicatorId : "N/A"}
                 </TableCell>
-                <TableCell style={{ width: "67%" }} key={index}>
-                  {item?.outcome !== undefined ? item.outcome : "N/A"}
+                <TableCell style={{ width: "60%" }} key={index}>
+                  {item?.output !== undefined ? item.output : "N/A"}
                 </TableCell>
                 <TableCell key={index}>
                   <Controls.ActionButton
                     color="primary"
                     onClick={() => {
                       if (item && item.indicatorId !== undefined) {
-                        openInPopupOutcome(item);
+                        openInPopupOutput(item);
                       }
                     }}
                   >
@@ -297,7 +307,7 @@ export default function Outcomes() {
                     color="secondary"
                     onClick={() => {
                       if (item && item.indicatorId !== undefined) {
-                        handleDeleteOutcome(item.indicatorId);
+                        handleDeleteOutput(item.indicatorId);
                       }
                     }}
                   >
@@ -311,13 +321,13 @@ export default function Outcomes() {
         <OTblPagination />
       </Paper>
       <Popup
-        title="Outcome Form"
-        openPopup={outcomeOpenPopup}
-        setOpenPopup={setOutcomeOpenPopup}
+        title="Output Form"
+        openPopup={outputOpenPopup}
+        setOpenPopup={setOutputOpenPopup}
       >
-        <OutcomeForm
-          recordForEditOutcome={recordForEditOutcome || undefined}
-          addOrEditOutcome={addOrEditOutcome}
+        <OutputForm
+          recordForEditOutput={recordForEditOutput || undefined}
+          addOrEditOutput={addOrEditOutput}
         />
       </Popup>
 
@@ -348,7 +358,7 @@ export default function Outcomes() {
           />
           <Tooltip
             title={
-              outcomeRecords.length === 0 ? "Please add an outcome first" : ""
+              outputRecords.length === 0 ? "Please add an outcome first" : ""
             }
           >
             <Controls.Button
@@ -361,7 +371,7 @@ export default function Outcomes() {
                 setOpenPopup(true);
                 setRecordForEdit(null);
               }}
-              disabled={outcomeRecords.length === 0}
+              disabled={outputRecords.length === 0}
             />
           </Tooltip>
         </Toolbar>
@@ -370,13 +380,25 @@ export default function Outcomes() {
           <TableBody>
             {indicatorRecordsAfterPagingAndSorting().map((item, index) => (
               <TableRow key={index}>
-                <TableCell key={index}>{item.outcomeId}</TableCell>
-                <TableCell key={index}>{item.indicatorId}</TableCell>
-                <TableCell key={index}>{item.indicator}</TableCell>
-                <TableCell key={index}>{item.calculation}</TableCell>
-                <TableCell key={index}>{item.disaggregation}</TableCell>
-                <TableCell key={index}>{item.target}</TableCell>
-                <TableCell key={index}>
+                <TableCell key={index} style={{ width: "8.3%" }}>
+                  {item.outputId}
+                </TableCell>
+                <TableCell key={index} style={{ width: "8.3%" }}>
+                  {item.indicatorId}
+                </TableCell>
+                <TableCell key={index} style={{ width: "50%" }}>
+                  {item.indicator}
+                </TableCell>
+                <TableCell key={index} style={{ width: "8.3%" }}>
+                  {item.calculation}
+                </TableCell>
+                <TableCell key={index} style={{ width: "8.3%" }}>
+                  {item.disaggregation}
+                </TableCell>
+                <TableCell key={index} style={{ width: "8.3%" }}>
+                  {item.target}
+                </TableCell>
+                <TableCell key={index} style={{ width: "8.3%" }}>
                   <Controls.ActionButton
                     color="primary"
                     onClick={() => {

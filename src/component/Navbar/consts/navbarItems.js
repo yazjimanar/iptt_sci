@@ -6,6 +6,6 @@ import DescriptionIcon from "@mui/icons-material/Description";
 export const mainNavbarItems = [
   { id: 1, icon: <ImportContactsIcon />, label: "General Info", route: "/" },
   { id: 3, icon: <DownloadDoneIcon />, label: "Outcome", route: "outcomes" },
-  { id: 2, icon: <OutputIcon />, label: "Output", route: "output" },
+  { id: 2, icon: <OutputIcon />, label: "Output", route: "outputs" },
   { id: 4, icon: <DescriptionIcon />, label: "Finalize", route: "finalize" },
 ];

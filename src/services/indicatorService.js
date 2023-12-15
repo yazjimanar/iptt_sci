@@ -10,7 +10,7 @@ export const getCalculationCollection = () => [
 ];
 
 export function insertIndicator(data, name) {
-  console.log("Inserting indicator:", data);
+  // console.log("Inserting indicator:", data);
 
   let Indicators = getAllIndicators(name);
   data["indicatorId"] = generateIndicatorId();
@@ -18,6 +18,44 @@ export function insertIndicator(data, name) {
     data.calculation !== undefined ? data.calculation : "";
   Indicators.push(data);
   localStorage.setItem(name, JSON.stringify(Indicators));
+}
+
+export function insertIndicatorOutcome(data, name) {
+  // console.log("Inserting indicator:", data);
+
+  let Indicators = getAllIndicators(name);
+  data["indicatorId"] = String(data.indicatorId);
+  data["calculationId"] =
+    data.calculation !== undefined ? data.calculation : "";
+  Indicators.push(data);
+
+  // console.log("Indicators after pushing data:", Indicators);
+
+  localStorage.setItem(name, JSON.stringify(Indicators));
+
+  // console.log(
+  //   "Indicators after storing in local storage:",
+  //   localStorage.getItem(name)
+  // );
+}
+
+export function insertIndicatorOutput(data, name) {
+  // console.log("Inserting indicator:", data);
+
+  let Indicators = getAllIndicators(name);
+  data["indicatorId"] = String(data.indicatorId);
+  data["calculationId"] =
+    data.calculation !== undefined ? data.calculation : "";
+  Indicators.push(data);
+
+  // console.log("Indicators after pushing data:", Indicators);
+
+  localStorage.setItem(name, JSON.stringify(Indicators));
+
+  // console.log(
+  //   "Indicators after storing in local storage:",
+  //   localStorage.getItem(name)
+  // );
 }
 
 export function updateIndicator(data, name) {
@@ -35,7 +73,7 @@ export function deleteIndicator(indicatorId, name) {
     (x) => x.indicatorId !== indicatorId
   );
   localStorage.setItem(name, JSON.stringify(updatedIndicators));
-  console.log(updatedIndicators);
+  // console.log(updatedIndicators);
   return updatedIndicators;
 }
 
@@ -78,3 +116,19 @@ export const generateNextIndicatorId = (outcomeId) => {
 
   return nextIndicatorId;
 };
+
+export function getIndicatorsForOutcome(outcomeId) {
+  const allIndicators = getAllIndicators("OutcomeIndicators");
+  return allIndicators.filter((indicator) => indicator.outcomeId === outcomeId);
+}
+
+export function getIndicatorsForOutput(outputId) {
+  const allIndicators = getAllIndicators("OutputIndicators");
+  console.log("All indicators:", allIndicators);
+  return allIndicators.filter((indicator) => indicator.outputId === outputId);
+}
+
+export function getOutcome(outcomeId) {
+  const allIndicators = getAllIndicators("OutputsData");
+  return allIndicators.filter((indicator) => indicator.outcomeId === outcomeId);
+}
